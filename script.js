@@ -99,7 +99,7 @@ function checkForMatch() {
     let isMatch = firstCard.innerHTML === secondCard.innerHTML;
 
     if (isMatch) {
-        resetBoard();
+        disableCards();
     } else {
         unflipCards();
     }
@@ -111,7 +111,9 @@ function checkForMatch() {
     to reset the firstCard, secondCard, and lockBoard variables. (That's been written for you already)
 */
 function disableCards() {
-    // Write your code here
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    resetBoard();
 }
  
 /* ---------------------  Everything under has already been done for you -------------------------- */
