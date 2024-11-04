@@ -24,15 +24,14 @@ let lockBoard = false;
 function initGame() {
     // Write your code here
     // Remove all of the HTML elements out of the div
-    let gameBoard = document.querySelector('game-board');
+    let gameBoard = document.getElementById('game-board');
     gameBoard.innerHTML = "";
 
     // Creating the new board
-    document.createElement('div').className = 'game-board';
     for (let i = 0; i < 2; i++){
         shuffleArray(symbols);
         for (let j = 0; j < symbols.length; j++){
-            createCard(symbols[j]);
+            gameBoard.appendChild(createCard(symbols[j]));
         }
     }
     document.getElementById('restart-btn').addEventListener('click', initGame);
@@ -45,10 +44,18 @@ function initGame() {
 */
 function createCard(symbol) {
     let gameBoard = document.querySelector('.game-board');
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = symbol
-    gameBoard.appendChild(card);
+    let cardObj = {
+        cardElement: document.createElement('div'),
+        cardSymbol: symbol,
+    }
+    cardObj.cardElement.classList.add('card');
+    cardObj.cardElement.addEventListener('click', function() {
+        flipCard(cardObj.cardElement);
+    });
+
+    cards.push(cardObj);
+    gameBoard.appendChild(cardObj.cardElement);
+    return cardObj.cardElement;
 }
 
 /*
@@ -60,9 +67,26 @@ function createCard(symbol) {
     want to check for a match using the checkForMatch() function. 
 */
 function flipCard(card) {
-    // If the board is supposed to be locked or you picked the same card you already picked
     if (lockBoard || card === firstCard) return;
-    // Write your code here
+
+    let cardObj = cards.find(cardObj => cardObj.cardElement === card);
+
+    // Add 'flipped' class to reveal the symbol
+    card.textContent = cardObj.cardSymbol;
+    card.classList.add('flipped');
+
+    // Checking if it's the first card flipped or not
+    if (!firstCard) {
+        firstCard = card; 
+        return;
+    }
+
+    // If its not the first card, then its the second card
+    secondCard = card;
+    lockBoard = true; 
+
+    // Check for match
+    checkForMatch();
 }
 
 /* 
@@ -72,6 +96,13 @@ function flipCard(card) {
 */
 function checkForMatch() {
     // Write your code here
+    let isMatch = firstCard.innerHTML === secondCard.innerHTML;
+
+    if (isMatch) {
+        resetBoard();
+    } else {
+        unflipCards();
+    }
 }
 
 /* 
